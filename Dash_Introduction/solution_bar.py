@@ -1,17 +1,19 @@
+# Solution to bar challenge.
+# Changed code lines 64 to 71
+
 import pandas as pd
-import plotly.express as px  # (version 4.7.0 or higher)
-import plotly.graph_objects as go
-from dash import Dash, dcc, html, Input, Output  # pip install dash (version 2.0.0 or higher)
+import plotly.express as px  # (version 4.7.0)
 
+import dash  # (version 1.12.0) pip install dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output
 
+app = dash.Dash(__name__)
 
-
-
-app = Dash(__name__)
-
-# -- Import and clean data (importing csv into pandas)
-# df = pd.read_csv("intro_bees.csv")
-df = pd.read_csv("https://raw.githubusercontent.com/Coding-with-Adam/Dash-by-Plotly/master/Other/Dash_Introduction/intro_bees.csv")
+# ------------------------------------------------------------------------------
+# Import and clean data (importing csv into pandas)
+df = pd.read_csv("intro_bees.csv")
 
 df = df.groupby(['State', 'ANSI', 'Affected by', 'Year', 'state_code'])[['Pct of Colonies Impacted']].mean()
 df.reset_index(inplace=True)
@@ -59,36 +61,14 @@ def update_graph(option_slctd):
     dff = dff[dff["Year"] == option_slctd]
     dff = dff[dff["Affected by"] == "Varroa_mites"]
 
-    # Plotly Express
-    fig = px.choropleth(
+    fig = px.bar(
         data_frame=dff,
-        locationmode='USA-states',
-        locations='state_code',
-        scope="usa",
-        color='Pct of Colonies Impacted',
+        x='State',
+        y='Pct of Colonies Impacted',
         hover_data=['State', 'Pct of Colonies Impacted'],
-        color_continuous_scale=px.colors.sequential.YlOrRd,
         labels={'Pct of Colonies Impacted': '% of Bee Colonies'},
         template='plotly_dark'
     )
-
-    # Plotly Graph Objects (GO)
-    # fig = go.Figure(
-    #     data=[go.Choropleth(
-    #         locationmode='USA-states',
-    #         locations=dff['state_code'],
-    #         z=dff["Pct of Colonies Impacted"].astype(float),
-    #         colorscale='Reds',
-    #     )]
-    # )
-    #
-    # fig.update_layout(
-    #     title_text="Bees Affected by Mites in the USA",
-    #     title_xanchor="center",
-    #     title_font=dict(size=24),
-    #     title_x=0.5,
-    #     geo=dict(scope='usa'),
-    # )
 
     return container, fig
 
