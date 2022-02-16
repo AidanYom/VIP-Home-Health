@@ -4,9 +4,6 @@ import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output  # pip install dash (version 2.0.0 or higher)
 
 
-
-
-
 app = Dash(__name__)
 
 # -- Import and clean data (importing csv into pandas)
@@ -81,7 +78,7 @@ def update_graph(option_slctd):
     #         colorscale='Reds',
     #     )]
     # )
-    #
+    
     # fig.update_layout(
     #     title_text="Bees Affected by Mites in the USA",
     #     title_xanchor="center",
