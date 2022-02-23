@@ -47,12 +47,11 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([]),
         dbc.Col([
-            dbc.Button("Log In", color="secondary", outline=True),
-            dbc.Button("Forgot Username/Password", color="secondary", outline=True),
-            dbc.Nav([
-                dbc.NavLink("To Github", href="https://github.com", active = "exact"),
-            ]),
-            html.Div(id='output')
+            dbc.Nav(
+                [dbc.NavItem(dbc.NavLink("Login", href="https://google.com", active=True)),
+                 dbc.NavItem(dbc.NavLink("Forgot Username/Password", href="https://google.com", active=True)),
+                 ], pills=True,),
+            html.Div(id='output'),
         ])
     ])
 ])
