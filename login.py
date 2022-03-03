@@ -1,10 +1,17 @@
 import dash_bootstrap_components as dbc
-from dash import Input, Output, Dash
+import pandas as pd
+from dash import Input, Output, Dash, State
 from dash import html
 
 # Bootstrap package needs to download to run
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+sampleData = {
+    "a": "a",
+    "b": "b",
+    "c": "c",
+}
 
 app.layout = dbc.Container([
     # Title
@@ -48,7 +55,7 @@ app.layout = dbc.Container([
         dbc.Col([]),
         dbc.Col([
             dbc.Nav(
-                [dbc.NavItem(dbc.NavLink("Login", href="https://google.com", active=True)),
+                [dbc.NavItem(dbc.NavLink("Login", id = "login-button",href="https://google.com", active=True)),
                  dbc.NavItem(dbc.NavLink("Forgot Username/Password", href="https://google.com", active=True)),
                  ], pills=True,),
             html.Div(id='output'),
@@ -57,10 +64,20 @@ app.layout = dbc.Container([
 ])
 @app.callback(Output("output", "children"),
             Input('userid', 'value'),
-            Input('password', 'value')
+            Input('password', 'value'),
+            Input('login-button', 'n_clicks'),
 )
-def navigation(userid, password):
-    return False
+def navigation(userid, password,n_clicks):
+    if n_clicks > 0:
+        if userid in sampleData.keys():
+            if password == sampleData[userid]:
+                print("success")
+        else:
+            print("failed")
+    else:
+        pass
+
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
