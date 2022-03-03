@@ -73,11 +73,11 @@ def navigation(userid, password,n_clicks):
     elif int(n_clicks) >= 1:
         if userid in sampleData.keys():
             if password == sampleData[userid]:
-                print("success")
+                return True
         else:
-            print("failed")
+            return False
     else:
-        print("notihign yet")
+        print("nothing yet")
 
 
 
