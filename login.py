@@ -31,7 +31,7 @@ app.layout = dbc.Container([
         dbc.Col([]),
         dbc.Col([
             dbc.Label("Username", html_for="example-email"),
-            dbc.Input(id = "userid", type="email", placeholder="Enter email"),
+            dbc.Input(id = "userid", placeholder="Enter email"),
             dbc.FormText(
                 "Enter your username",
                 color="secondary", ),
@@ -68,14 +68,16 @@ app.layout = dbc.Container([
             Input('login-button', 'n_clicks'),
 )
 def navigation(userid, password,n_clicks):
-    if n_clicks > 0:
+    if n_clicks == None:
+        print("nothing yet")
+    elif int(n_clicks) >= 1:
         if userid in sampleData.keys():
             if password == sampleData[userid]:
                 print("success")
         else:
             print("failed")
     else:
-        pass
+        print("notihign yet")
 
 
 
