@@ -71,7 +71,8 @@ card = dbc.Card(
                         [
                             html.H4("Nurse name", className="card-title"),
                             html.P(
-                                "Description of nurse",
+                                "Name :\n"
+                                "Specialities:",
                                 className="card-text",
                             ),
                             html.Small(
