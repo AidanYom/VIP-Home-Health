@@ -5,10 +5,10 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 SIDEBAR_STYLE = {
     "top": "12rem",
-    "position":"fixed",
+    "position": "fixed",
     "left": 0,
     "bottom": 0,
-    "width": "10rem",
+    "width": "12rem",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
@@ -20,14 +20,41 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
+RE_STYLE = {
+    "top": 0,
+    "left": 0,
+    "right" : 0,
+    "bottom": 0,
+}
+
 HEADER_STYLE = {
     "top": 0,
     "left": 0,
     "bottom": "2rem",
     "padding": "2rem 1rem",
-    "background-color":"#93CAED",
+    "background-color": "#93CAED",
 }
-
+jumbotron = html.Div(
+    dbc.Container(
+        [
+            html.H1("Jumbotron", className="display-3"),
+            html.P(
+                "404 Error",
+                className="lead",
+            ),
+            html.Hr(className="my-2"),
+            html.P(
+                "Something went wrong"
+            ),
+            html.P(
+                dbc.Button("Learn more", color="primary"), className="lead"
+            ),
+        ],
+        fluid=True,
+        className="py-3",
+    ),
+    className="p-3 bg-light rounded-3",
+)
 card = dbc.Card(
     [
         dbc.Row(
@@ -64,15 +91,14 @@ card = dbc.Card(
 )
 
 sidebar = html.Div([
-    dbc.Row([
-        dbc.Col(children=[
-            dbc.Row(html.Div("Home")),
-            dbc.Row(html.Div("Settings")),
-            dbc.Row(html.Div("Buttons...")),
-            ],
-            width={'order':'first', 'size':1}
-        ),
-    ])
+    dbc.Nav([
+        dbc.NavLink("Home", href="/", active="exact"),
+        dbc.NavLink("Map", href="/page-1", active="exact"),
+        dbc.NavLink("Setting", href="/page-2", active="exact"),
+    ],
+        vertical=True,
+        pills=True,
+    )
 ], style=SIDEBAR_STYLE)
 
 header = html.Div([
@@ -84,16 +110,16 @@ header = html.Div([
 filters = html.Div([
     dbc.Row([
         dbc.Col(
-            dbc.Button("Filter 1", outline = True, id='b1', n_clicks=0),
+            dbc.Button("Filter 1", outline=True, id='b1', n_clicks=0),
         ),
         dbc.Col(
-            dbc.Button("Filter 2", outline = True, id='b2', n_clicks=0),
+            dbc.Button("Filter 2", outline=True, id='b2', n_clicks=0),
         ),
         dbc.Col(
-            dbc.Button("Filter 3", outline = True, id='b3', n_clicks=0),
+            dbc.Button("Filter 3", outline=True, id='b3', n_clicks=0),
         ),
         dbc.Col(
-            dbc.Button("Filter 4", outline = True, id='b4', n_clicks=0),
+            dbc.Button("Filter 4", outline=True, id='b4', n_clicks=0),
         ),
     ]),
     dbc.Row([
@@ -102,13 +128,13 @@ filters = html.Div([
                 dbc.Card(
                     dcc.Checklist(
                         options=[
-                            {"label":"option 1", "value":"1"},
-                            {"label":"option 2", "value":"2"},
-                            {"label":"option 3", "value":"3"},
+                            {"label": "option 1", "value": "1"},
+                            {"label": "option 2", "value": "2"},
+                            {"label": "option 3", "value": "3"},
                         ]
                     ),
                 ),
-                id = "c1",
+                id="c1",
                 is_open=False,
             )
         ),
@@ -117,13 +143,13 @@ filters = html.Div([
                 dbc.Card(
                     dcc.Checklist(
                         options=[
-                            {"label":"option 1", "value":"1"},
-                            {"label":"option 2", "value":"2"},
-                            {"label":"option 3", "value":"3"},
+                            {"label": "option 1", "value": "1"},
+                            {"label": "option 2", "value": "2"},
+                            {"label": "option 3", "value": "3"},
                         ]
                     ),
                 ),
-                id = "c2",
+                id="c2",
                 is_open=False,
             )
         ),
@@ -132,13 +158,13 @@ filters = html.Div([
                 dbc.Card(
                     dcc.Checklist(
                         options=[
-                            {"label":"option 1", "value":"1"},
-                            {"label":"option 2", "value":"2"},
-                            {"label":"option 3", "value":"3"},
+                            {"label": "option 1", "value": "1"},
+                            {"label": "option 2", "value": "2"},
+                            {"label": "option 3", "value": "3"},
                         ]
                     ),
                 ),
-                id = "c3",
+                id="c3",
                 is_open=False,
             )
         ),
@@ -147,42 +173,36 @@ filters = html.Div([
                 dbc.Card(
                     dcc.Checklist(
                         options=[
-                            {"label":"option 1", "value":"1"},
-                            {"label":"option 2", "value":"2"},
-                            {"label":"option 3", "value":"3"},
+                            {"label": "option 1", "value": "1"},
+                            {"label": "option 2", "value": "2"},
+                            {"label": "option 3", "value": "3"},
                         ]
                     ),
                 ),
-                id = "c4",
+                id="c4",
                 is_open=False,
             )
         ),
     ])
 ])
 
-content = html.Div([dbc.Container([
+aa = [dbc.Container([
     dbc.Row([
         html.Div([
             dcc.Dropdown(
                 id="Name",
                 options=[
-                    {"label":"Sample Nurse 1", "value":"Sample Nurse 1"},
-                    {"label":"Sample Nurse 2", "value":"Sample Nurse 2"},
-                    {"label":"Sample Nurse 3", "value":"Sample Nurse 3"},
-                    {"label":"Sample Nurse 4", "value":"Sample Nurse 4"},
+                    {"label": "Sample Nurse 1", "value": "Sample Nurse 1"},
+                    {"label": "Sample Nurse 2", "value": "Sample Nurse 2"},
+                    {"label": "Sample Nurse 3", "value": "Sample Nurse 3"},
+                    {"label": "Sample Nurse 4", "value": "Sample Nurse 4"},
                 ],
                 multi=True,
-                placeholder = "search for nurse by name",
+                placeholder="search for nurse by name",
             )
         ]),
     ]),
     filters,
-    #dbc.Row([
-        # dbc.Col(html.Div([html.H3("Nurse")]), width={'size':6}),
-        # dbc.Col(html.Div([html.H3("Number of Patients")]), width={'size':3}),
-
-
-    #]),
     dbc.Row([
         dbc.Col(dbc.Card(
             [
@@ -195,23 +215,23 @@ content = html.Div([dbc.Container([
                             className="card-text",
                         ),
                         dbc.Button(
-                        "Detail", id="nurse1", color="secondary", className="mt-auto", n_clicks=0
+                            "Detail", id="nurse1", color="secondary", className="mt-auto", n_clicks=0
                         ),
                         dbc.Modal(
-                                    [
-                                        dbc.ModalHeader(dbc.ModalTitle("Nurse 1"), close_button=True),
-                                        dbc.ModalBody(card),
-                                        dbc.ModalFooter(
-                                            dbc.Button(
-                                                "Close",
-                                                id="close-nurse1",
-                                                className="ms-auto",
-                                                n_clicks=0,
-                                            )
-                                        ),
-                                    ],
-                                    id="modal-nurse1",
-                                    is_open=False,
+                            [
+                                dbc.ModalHeader(dbc.ModalTitle("Nurse 1"), close_button=True),
+                                dbc.ModalBody(card),
+                                dbc.ModalFooter(
+                                    dbc.Button(
+                                        "Close",
+                                        id="close-nurse1",
+                                        className="ms-auto",
+                                        n_clicks=0,
+                                    )
+                                ),
+                            ],
+                            id="modal-nurse1",
+                            is_open=False,
                         ),
                     ]
                 ),
@@ -230,7 +250,7 @@ content = html.Div([dbc.Container([
                             className="card-text",
                         ),
                         dbc.Button(
-                        "Detail", id="nurse2", color="secondary", className="mt-auto", n_clicks=0
+                            "Detail", id="nurse2", color="secondary", className="mt-auto", n_clicks=0
                         ),
                         dbc.Modal(
                             [
@@ -251,8 +271,8 @@ content = html.Div([dbc.Container([
                     ]
                 ),
             ],
-            color ="primary",
-            outline = True,
+            color="primary",
+            outline=True,
         )),
         dbc.Col(dbc.Card(
             [
@@ -286,12 +306,12 @@ content = html.Div([dbc.Container([
                     ]
                 ),
             ],
-            color ="primary",
-            outline = True,
+            color="primary",
+            outline=True,
         ))
     ]),
-html.Br(),
-dbc.Row([
+    html.Br(),
+    dbc.Row([
         dbc.Col(dbc.Card(
             [
                 dbc.CardHeader("Nurse"),
@@ -324,8 +344,8 @@ dbc.Row([
                     ]
                 ),
             ],
-            color ="primary",
-            outline = True,
+            color="primary",
+            outline=True,
         )),
         dbc.Col(dbc.Card(
             [
@@ -359,8 +379,8 @@ dbc.Row([
                     ]
                 ),
             ],
-            color ="primary",
-            outline = True,
+            color="primary",
+            outline=True,
         )),
         dbc.Col(dbc.Card(
             [
@@ -394,19 +414,21 @@ dbc.Row([
                     ]
                 ),
             ],
-            color ="primary",
-            outline = True,
+            color="primary",
+            outline=True,
         ))
     ])
-], fluid=True)], style=CONTENT_STYLE)
-
+], fluid=True)]
+content = html.Div(aa, id="page-content", style=CONTENT_STYLE)
 app.layout = html.Div([
+    dcc.Location(id="url"),
     header,
     sidebar,
     content
 ])
 
-#callbacks
+
+# callbacks
 @app.callback(
     Output("c1", "is_open"),
     Input("b1", "n_clicks"),
@@ -416,6 +438,7 @@ def toggle_left(n_b1, is_open):
     if n_b1:
         return not is_open
     return is_open
+
 
 @app.callback(
     Output("c2", "is_open"),
@@ -427,6 +450,7 @@ def toggle_left(n_b2, is_open):
         return not is_open
     return is_open
 
+
 @app.callback(
     Output("c3", "is_open"),
     Input("b3", "n_clicks"),
@@ -436,6 +460,7 @@ def toggle_left(n_b3, is_open):
     if n_b3:
         return not is_open
     return is_open
+
 
 @app.callback(
     Output("c4", "is_open"),
@@ -447,6 +472,7 @@ def toggle_left(n_b4, is_open):
         return not is_open
     return is_open
 
+
 @app.callback(
     Output("modal-nurse1", "is_open"),
     [Input("nurse1", "n_clicks"), Input("close-nurse1", "n_clicks")],
@@ -456,6 +482,8 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
 @app.callback(
     Output("modal-nurse2", "is_open"),
     [Input("nurse2", "n_clicks"), Input("close-nurse2", "n_clicks")],
@@ -465,6 +493,8 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
 @app.callback(
     Output("modal-nurse3", "is_open"),
     [Input("nurse3", "n_clicks"), Input("close-nurse3", "n_clicks")],
@@ -474,6 +504,8 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
 @app.callback(
     Output("modal-nurse4", "is_open"),
     [Input("nurse4", "n_clicks"), Input("close-nurse4", "n_clicks")],
@@ -483,6 +515,8 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
 @app.callback(
     Output("modal-nurse5", "is_open"),
     [Input("nurse5", "n_clicks"), Input("close-nurse5", "n_clicks")],
@@ -492,6 +526,8 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
 @app.callback(
     Output("modal-nurse6", "is_open"),
     [Input("nurse6", "n_clicks"), Input("close-nurse6", "n_clicks")],
@@ -502,5 +538,24 @@ def toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
+
+@app.callback(
+    Output("page-content", "children"),
+    [Input("url", "pathname")]
+)
+def render_page(pathname):
+    if pathname == "/":
+        return aa
+    elif pathname == "/page-1":
+        return [
+            html.H5("Map")
+        ]
+    elif pathname == "/page-2":
+        return [
+            html.H5("Setting")
+        ]
+    return [jumbotron]
+
+
 if __name__ == '__main__':
-    app.run_server(debug = True)
+    app.run_server(debug=True)
