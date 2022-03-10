@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[1]:
 
 
 pip install --upgrade firebase-admin
@@ -25,7 +25,7 @@ if not firebase_admin._apps:
 db = firestore.client()
 
 
-# In[25]:
+# In[3]:
 
 
 # Create collection containing nurse names, along with first nurses info
@@ -38,7 +38,7 @@ doc_ref.set({
 })
 
 
-# In[7]:
+# In[4]:
 
 
 def add_to_nurse():
@@ -53,7 +53,7 @@ def add_to_nurse():
     })
 
 
-# In[22]:
+# In[27]:
 
 
 def add_to_patients():
@@ -68,11 +68,18 @@ def add_to_patients():
         if i != 'NA':
             y = input("Field Inputs: ")
             Other.append([i,y])
+    
     doc_ref.set({
-    u'first': Name[0],
-    u'last': Name[1],
-    u'born': BirthDate
+    u'first': Name[0]
     })
+    if len(Name) > 2:
+        doc_ref.set({
+            u'middle': ' '.join(Name[1:(len(Name) - 1)])
+        },merge=True)
+    doc_ref.set({
+    u'last': Name[len(Name)-1],
+    u'born': BirthDate
+    },merge=True)
     for x in Other:
         doc_ref.set({
             x[0] : x[1]
@@ -81,7 +88,7 @@ def add_to_patients():
         
 
 
-# In[24]:
+# In[28]:
 
 
 add_to_patients()
