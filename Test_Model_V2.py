@@ -1,52 +1,43 @@
-from turtle import xcor
+from turtle import width, xcor
 from dash import html, dcc, Dash, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
 import dash_auth
 
 
-
-# make sample data to read from
-nurse_data = {'Name': ['Jack Knox', 'Hanna Ertel', 'Aidan Anastario', 'Kaushik Karthik', 'Miranda Chai', 'Jay Kee'],
-              'Area': ['Queens', 'Staten Island', 'Bronx', 'Manhattan', 'Queens', 'Brooklyn'],
-              'Num_Patients': [5, 4, 5, 5, 3, 6],
-              'Hospis': [0, 0, 1, 0, 1, 1],
-              'Traich': [1, 1, 0, 0, 0, 0],
-              'Colostony': [1, 0, 1, 1, 1, 0]
-              }
+#make sample data to read from
+nurse_data = {'Name':['Jack Knox', 'Hanna Ertel', 'Aidan Anastario', 'Kaushik Karthik', 'Miranda Chai', 'Jay Kee'],
+              'Area':['Queens', 'Staten Island', 'Bronx', 'Manhattan', 'Queens', 'Brooklyn'],
+              'Num_Patients':[5,4,5,5,3,6],
+              'Hospis':[0,0,1,0,1,1],
+              'Traich':[1,1,0,0,0,0],
+              'Colostony':[1,0,1,1,1,0]
+            }
 
 nurse_df = pd.DataFrame(nurse_data)
 
 nurse_info_list = []
 
 for x in range(0, len(nurse_df)):
-    nurse_list_str = ''
-    nurse_list_str += nurse_df.at[x, 'Name']
-    for y in range(0, 30 - len(nurse_list_str)):
-        nurse_list_str += " "
-    nurse_list_str += nurse_df.at[x, 'Area']
-    for y in range(0, 15 - len(nurse_df.at[x, 'Area'])):
-        nurse_list_str += " "
-    nurse_list_str += "         " + str(nurse_df.at[x, 'Num_Patients']) + "         "
-    if (nurse_df.at[x, 'Hospis'] == 1):
-        nurse_list_str += " Hospis"
+    nurse_info_list.append([])
+    nurse_info_list[x].append(nurse_df.at[x, 'Name'])
+    nurse_info_list[x].append(nurse_df.at[x, 'Area'])
+    nurse_info_list[x].append(str(nurse_df.at[x, 'Num_Patients']))
+    if(nurse_df.at[x, 'Hospis'] == 1):
+        nurse_info_list[x].append("Hospis")
     else:
-        nurse_list_str += "       "
-    nurse_list_str += "      "
-    if (nurse_df.at[x, 'Traich'] == 1):
-        nurse_list_str += " Traich"
+        nurse_info_list[x].append(0)
+    if(nurse_df.at[x, 'Traich'] == 1):
+        nurse_info_list[x].append("Traich")
     else:
-        nurse_list_str += "       "
-    nurse_list_str += "      "
-    if (nurse_df.at[x, 'Colostony'] == 1):
-        nurse_list_str += " Colonstrony"
-    nurse_list_str += "      "
-    nurse_info_list.append(nurse_list_str[0:(len(nurse_list_str) - 8)])
-
-# [print(q) for q in nurse_info_list]
+        nurse_info_list[x].append(0)
+    if(nurse_df.at[x, 'Colostony'] == 1):
+        nurse_info_list[x].append("Colostony")
+    else:
+        nurse_info_list[x].append(0)
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-# add a mobile layout component later
+#add a mobile layout component later
 
 auth = dash_auth.BasicAuth(
     app,
@@ -105,20 +96,23 @@ aa = [dbc.Container([
                 multi=True,
                 placeholder="search for nurse by name",
             )
-        ], width={"size": 3}),
+        ], width = {"size":3}),
         dbc.Col(
             dbc.Button("Area", outline=True, id='area_filter', n_clicks=0),
-            width={"size": 2}
+            width = {"size":2},
+            align='start'
         ),
         dbc.Col(
             dbc.Button("# Patients", outline=True, id='num_patients_filter', n_clicks=0),
-            width={"size": 2}
+            width = {"size":2},
+            align='start'
         ),
         dbc.Col(
             dbc.Button("Skills", outline=True, id='skills_filter', n_clicks=0),
-            width={"size": 2}
+            width = {"size":5},
+            align='start'
         ),
-    ]),
+    ], justify='start', className="g-0"),
     dbc.Row([
         dbc.Col(
             dbc.Collapse(
@@ -133,7 +127,7 @@ aa = [dbc.Container([
                 id="area_filter_checklist",
                 is_open=False,
             ),
-            width={'size': 2, 'offset': 3}
+            width={'size':2, 'offset':3},
         ),
         dbc.Col(
             dbc.Collapse(
@@ -148,7 +142,7 @@ aa = [dbc.Container([
                 id="num_patients_checklist",
                 is_open=False,
             ),
-            width={'size': 2},
+            width={'size':2},
         ),
         dbc.Col(
             dbc.Collapse(
@@ -164,14 +158,21 @@ aa = [dbc.Container([
                 id="skills_filter_checklist",
                 is_open=False,
             ),
-            width={'size': 2}
+            width={'size':2},
         ),
-
-    ]),
+        
+    ], align='start'),
     dbc.Row([
         dbc.ListGroup([
-            # dbc.ListGroupItem(x) for x in nurse_info_list
-            dbc.ListGroupItem(id='listed_nurse')
+            dbc.ListGroupItem(dbc.Row(
+                (dbc.Col(x[0], width={'size':3}),
+                dbc.Col(x[1], width={'size':2}),
+                dbc.Col(x[2], width={'size':2}),
+                dbc.Col(x[3], width={'size':1}) if x[3] != 0 else dbc.Col("", width={'size':1}),
+                dbc.Col(x[4], width={'size':1}) if x[4] != 0 else dbc.Col("", width={'size':1}),
+                dbc.Col(x[5], width={'size':1}) if x[5] != 0 else dbc.Col("", width={'size':1})),
+                className='gx-5'
+            )) for x in nurse_info_list
         ])
     ])
 ], fluid=True)]
@@ -182,18 +183,16 @@ app.layout = dbc.Container([
     dcc.Location(id="url"),
     header,
     html.Br(),
-    # sidebar,
     dbc.Row([
         dbc.Col([
             sidebar
-        ], width={'size': 1}),
-        dbc.Col([content], width={'size': 11}),
+        ], width = {'size':1}),
+        dbc.Col([content], width = {'size':11}),
     ])
-], fluid=True)
-
+], fluid = True)
 
 # callbacks
-# dropdown_list
+#dropdown_list
 # @app.callback(
 #     Output('listed_nurse', 'children'),
 #     [Input('Name', 'value'),
@@ -206,7 +205,7 @@ app.layout = dbc.Container([
 #     if(!(name_list)):
 
 
-# basic
+#basic
 @app.callback(
     Output("area_filter_checklist", "is_open"),
     Input("area_filter", "n_clicks"),
@@ -216,7 +215,6 @@ def toggle_left(n_area_filter, is_open):
     if n_area_filter:
         return not is_open
     return is_open
-
 
 @app.callback(
     Output("num_patients_checklist", "is_open"),
@@ -228,7 +226,6 @@ def toggle_left(n_num_patients_filter, is_open):
         return not is_open
     return is_open
 
-
 @app.callback(
     Output("skills_filter_checklist", "is_open"),
     Input("skills_filter", "n_clicks"),
@@ -238,7 +235,6 @@ def toggle_left(n_skills_filter, is_open):
     if n_skills_filter:
         return not is_open
     return is_open
-
 
 @app.callback(
     Output("page-content", "children"),
