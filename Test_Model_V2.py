@@ -121,10 +121,11 @@ aa = [dbc.Container([
                         options=[
                             {"label": x, "value": x}
                             for x in sorted(nurse_df["Area"].unique())
-                        ]
+                        ],
+                        id="area_filter_checklist",
                     ),
                 ),
-                id="area_filter_checklist",
+                id="area_collapse",
                 is_open=False,
             ),
             width={'size':2, 'offset':3},
@@ -137,9 +138,10 @@ aa = [dbc.Container([
                             {"label": x, "value": x}
                             for x in sorted(nurse_df["Num_Patients"].unique())
                         ],
+                        id="num_patients_checklist",
                     ),
                 ),
-                id="num_patients_checklist",
+                id="num_patients_collapse",
                 is_open=False,
             ),
             width={'size':2},
@@ -152,27 +154,21 @@ aa = [dbc.Container([
                             {"label": "Hospis", "value": "Hospis"},
                             {"label": "Traich", "value": "Traich"},
                             {"label": "Colostony", "value": "Colostony"},
-                        ]
+                        ],
+                        id="skills_filter_checklist"
                     ),
                 ),
-                id="skills_filter_checklist",
+                id="skills_collapse",
                 is_open=False,
             ),
             width={'size':2},
         ),
         
     ], align='start'),
+    html.Br(),
     dbc.Row([
         dbc.ListGroup([
-            dbc.ListGroupItem(dbc.Row(
-                (dbc.Col(x[0], width={'size':3}),
-                dbc.Col(x[1], width={'size':2}),
-                dbc.Col(x[2], width={'size':2}),
-                dbc.Col(x[3], width={'size':1}) if x[3] != 0 else dbc.Col("", width={'size':1}),
-                dbc.Col(x[4], width={'size':1}) if x[4] != 0 else dbc.Col("", width={'size':1}),
-                dbc.Col(x[5], width={'size':1}) if x[5] != 0 else dbc.Col("", width={'size':1})),
-                className='gx-5'
-            )) for x in nurse_info_list
+            html.Div(id='nurse_group_list', children=[])
         ])
     ])
 ], fluid=True)]
@@ -191,25 +187,50 @@ app.layout = dbc.Container([
     ])
 ], fluid = True)
 
-# callbacks
-#dropdown_list
-# @app.callback(
-#     Output('listed_nurse', 'children'),
-#     [Input('Name', 'value'),
-#     Input('area_filter_checklist', 'value'),
-#     Input('num_patients_checklist', 'value'),
-#     Input('skills_filter_checklist', 'value')]
-# )
-# def filter_list(name_list, area_list, patients_list, skills_list):
-#     valid_nurses = []
-#     if(!(name_list)):
 
+# callbacks
+@app.callback(
+    Output('nurse_group_list', 'children'),
+    [Input('Name', 'value'),
+    Input('area_filter_checklist', 'value'),
+    Input('num_patients_checklist', 'value'),
+    Input('skills_filter_checklist', 'value')]
+)
+def filter_list(name_list, area_list, num_patients_list, skills_list):
+    filtered_list = []
+    for x in nurse_info_list:
+        selected = True
+        if(name_list is not None and len(name_list) > 0):
+            if(not(x[0] in name_list)):
+                selected = False
+        if(area_list is not None and len(area_list) > 0):
+            if(not(x[1] in area_list)):
+                selected = False
+        if(num_patients_list is not None and len(num_patients_list) > 0):
+            if(not(int(x[2]) in num_patients_list)):
+                selected = False
+        if(skills_list is not None and len(skills_list) > 0):
+            for y in skills_list:
+                if(not((x[3] == y)|(x[4] == y)|(x[5] == y))):
+                    selected = False
+        if(selected):
+            filtered_list.append(dbc.ListGroupItem(dbc.Row(
+                (dbc.Col(x[0], width={'size':3}),
+                dbc.Col(x[1], width={'size':2}),
+                dbc.Col(x[2], width={'size':2}),
+                dbc.Col(x[3], width={'size':1}) if x[3] != 0 else dbc.Col("", width={'size':1}),
+                dbc.Col(x[4], width={'size':1}) if x[4] != 0 else dbc.Col("", width={'size':1}),
+                dbc.Col(x[5], width={'size':1}) if x[5] != 0 else dbc.Col("", width={'size':1})),
+                className='gx-5',    
+            )))
+            
+    return filtered_list
 
 #basic
 @app.callback(
-    Output("area_filter_checklist", "is_open"),
+    Output("area_collapse", "is_open"),
     Input("area_filter", "n_clicks"),
-    [State("area_filter_checklist", "is_open")],
+    [State("area_collapse", "is_open")],
 )
 def toggle_left(n_area_filter, is_open):
     if n_area_filter:
@@ -217,9 +238,9 @@ def toggle_left(n_area_filter, is_open):
     return is_open
 
 @app.callback(
-    Output("num_patients_checklist", "is_open"),
+    Output("num_patients_collapse", "is_open"),
     Input("num_patients_filter", "n_clicks"),
-    [State("num_patients_checklist", "is_open")],
+    [State("num_patients_collapse", "is_open")],
 )
 def toggle_left(n_num_patients_filter, is_open):
     if n_num_patients_filter:
@@ -227,9 +248,9 @@ def toggle_left(n_num_patients_filter, is_open):
     return is_open
 
 @app.callback(
-    Output("skills_filter_checklist", "is_open"),
+    Output("skills_collapse", "is_open"),
     Input("skills_filter", "n_clicks"),
-    [State("skills_filter_checklist", "is_open")],
+    [State("skills_collapse", "is_open")],
 )
 def toggle_left(n_skills_filter, is_open):
     if n_skills_filter:
