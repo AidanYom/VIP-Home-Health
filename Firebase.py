@@ -1,15 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-pip install --upgrade firebase-admin
-
-
-# In[2]:
-
-
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -23,11 +11,6 @@ if not firebase_admin._apps:
 #firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-
-
-# In[3]:
-
-
 # Create collection containing nurse names, along with first nurses info
 doc_ref = db.collection(u'Nurses').document(u'Nurse 1')
 doc_ref.set({
@@ -36,10 +19,6 @@ doc_ref.set({
     u'last': u'Knox',
     u'born': 2001
 })
-
-
-# In[4]:
-
 
 def add_to_nurse():
     Name  = input("Nuse Name: ")
@@ -51,11 +30,7 @@ def add_to_nurse():
     u'last': Name[1],
     u'born': BirthDate
     })
-
-
-# In[27]:
-
-
+    
 def add_to_patients():
     Name  = input("Patient Name: ")
     doc_ref = db.collection(u'Patients').document(Name)
@@ -85,23 +60,52 @@ def add_to_patients():
             x[0] : x[1]
         },merge=True)
     
-        
+       
+# add_to_patients()
 
+### PYREBASE AUTHENTICATION ###
+import pyrebase
 
-# In[28]:
+# setting up config for pyrebase initialization
+config = {
+  'apiKey': "AIzaSyDKl1yhFUxiRUiH0BkJFKhmBfVnIIEyPhU",
+  'authDomain': "fir-practice-17cce.firebaseapp.com",
+  'databaseURL': "fir-practice-17cce.firebaseio.com",
+  'projectId': "fir-practice-17cce",
+  'storageBucket': "fir-practice-17cce.appspot.com",
+  'messagingSenderId': "527924317355",
+  'appId': "1:527924317355:web:a28159a1f040fd311f7bee",
+  'measurementId': "G-D6W9MBQEK8"
+}
 
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
 
-add_to_patients()
+# checks username and password to see if valid login
+# returns user object if correct, and an error string if not
+# error string come in the format such as "INVALID_PASSWORD", "INVALID_EMAIL", etc.
+# check out https://firebase.google.com/docs/auth/admin/errors for more error messages
+def check_login(emuser, pwd):
+    try:
+        user = auth.sign_in_with_email_and_password(emuser, pwd)
+    except Exception as e:
+        error_json = e.args[1]
+        error = json.loads(error_json)['error']
+        print(error['message'])
+        user = error['message']
+    
+    return user
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+# creates new user with email and password
+# returns user object if correct, and an error string if not
+# error string come in the format such as "PASSWORD_TOO_WEAK", "EMAIL_ALREADY_EXISTS", etc.
+# check out https://firebase.google.com/docs/auth/admin/errors for more error messages
+def make_user(emuser, pwd):
+    try:
+        user = auth.create_user_with_email_and_password(emuser, pwd)
+    except Exception as e:
+        error_json = e.args[1]
+        error = json.loads(error_json)['error']
+        user = error['message']
+    
+    return user
