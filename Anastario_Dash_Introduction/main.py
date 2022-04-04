@@ -219,7 +219,7 @@ bb = [dbc.Container([
             align='start'
         ),
         dbc.Col(
-            dbc.Button("Assigned Nurse", outline=True, id='Assigned Nurse', n_clicks=0),
+            dbc.Button("Assigned Nurse", outline=True, id='assigned_nurse_filter', n_clicks=0),
             width={"size": 2},
             align='start'
         ),
@@ -254,10 +254,10 @@ bb = [dbc.Container([
                             {"label": x, "value": x}
                             for x in sorted(patient_df["assigned_nurse"].unique())
                         ],
-                        id="assigned_nurse",
+                        id="assigned_nurse_checklist",
                     ),
                 ),
-                id="assigned_nurse", #num_patients_collapse
+                id="assigned_nurse_collapse", #num_patients_collapse
                 is_open=False,
             ),
             width={'size': 2},
@@ -381,7 +381,7 @@ def nurse_toggle_left(n_skills_filter, is_open):
     Output('patient_group_list', 'children'),
     [Input('patient_Name', 'value'),
      Input('patient_area_filter_checklist', 'value'),
-     Input('assigned_nurse', 'value'),
+     Input('assigned_nurse_checklist', 'value'),
      Input('sd_filter_checklist', 'value')]
 )
 def patient_filter_list(name_list, area_list, num_patients_list, skills_list):
@@ -418,7 +418,7 @@ def patient_filter_list(name_list, area_list, num_patients_list, skills_list):
 # basic
 @app.callback(
     Output("patient_area_collapse", "is_open"),
-    Input("area_filter", "n_clicks"),
+    Input("patient_area_filter", "n_clicks"),
     [State("patient_area_collapse", "is_open")],
 )
 def patient_toggle_left(n_area_filter, is_open):
@@ -428,9 +428,9 @@ def patient_toggle_left(n_area_filter, is_open):
 
 
 @app.callback(
-    Output("assigned_nurse", "is_open"),
-    Input("Assigned Nurse", "n_clicks"),
-    [State("assigned_nurse", "is_open")],
+    Output("assigned_nurse_collapse", "is_open"),
+    Input("assigned_nurse_filter", "n_clicks"),
+    [State("assigned_nurse_collapse", "is_open")],
 )
 def patient_toggle_left(n_assigned_nurse, is_open):
     if n_assigned_nurse:
