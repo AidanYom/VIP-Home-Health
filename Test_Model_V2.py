@@ -4,7 +4,6 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import dash_auth
 
-
 #make sample data to read from
 nurse_data = {'Name':['Jack Knox', 'Hanna Ertel', 'Aidan Anastario', 'Kaushik Karthik', 'Miranda Chai', 'Jay Kee'],
               'Area':['Queens', 'Staten Island', 'Bronx', 'Manhattan', 'Queens', 'Brooklyn'],
@@ -109,9 +108,23 @@ aa = [dbc.Container([
         ),
         dbc.Col(
             dbc.Button("Skills", outline=True, id='skills_filter', n_clicks=0),
-            width = {"size":5},
+            width = {"size":3},
             align='start'
         ),
+        dbc.Col([
+            dcc.Dropdown(
+                id="sort_by",
+                options=[
+                    {"label":"Area (default)", "value":"Area (default)"},
+                    {"label":"Alphabetical", "value":"Alphabetical"},
+                    {"label":"# Patients (low to high)", "value":"# Patients (low to high)"},
+                    {"label":"# Patients (high to low)", "value":"# Patients (high to low)"},
+                ],
+                value="Area",
+                multi=False,
+                placeholder="Sort by"
+            ),
+        ], width={"size":2}),
     ], justify='start', className="g-0"),
     dbc.Row([
         dbc.Col(
@@ -194,10 +207,13 @@ app.layout = dbc.Container([
     [Input('Name', 'value'),
     Input('area_filter_checklist', 'value'),
     Input('num_patients_checklist', 'value'),
-    Input('skills_filter_checklist', 'value')]
+    Input('skills_filter_checklist', 'value'),
+    Input('sort_by', 'value')]
 )
-def filter_list(name_list, area_list, num_patients_list, skills_list):
+def filter_list(name_list, area_list, num_patients_list, skills_list, sort_by):
     filtered_list = []
+    unsorted_list = []
+    sorted_list = []
     for x in nurse_info_list:
         selected = True
         if(name_list is not None and len(name_list) > 0):
@@ -214,15 +230,94 @@ def filter_list(name_list, area_list, num_patients_list, skills_list):
                 if(not((x[3] == y)|(x[4] == y)|(x[5] == y))):
                     selected = False
         if(selected):
-            filtered_list.append(dbc.ListGroupItem(dbc.Row(
-                (dbc.Col(x[0], width={'size':3}),
-                dbc.Col(x[1], width={'size':2}),
-                dbc.Col(x[2], width={'size':2}),
-                dbc.Col(x[3], width={'size':1}) if x[3] != 0 else dbc.Col("", width={'size':1}),
-                dbc.Col(x[4], width={'size':1}) if x[4] != 0 else dbc.Col("", width={'size':1}),
-                dbc.Col(x[5], width={'size':1}) if x[5] != 0 else dbc.Col("", width={'size':1})),
-                className='gx-5',    
-            )))
+            unsorted_list.append(x)
+        
+    if(sort_by == "Alphabetical"):
+        for x in range(len(unsorted_list)):
+            idx = 0
+            while(idx < len(sorted_list)):
+                letter_idx = 0
+                while(letter_idx < len(sorted_list[idx][0]) - 1 and letter_idx < len(unsorted_list[x][0]) - 1 and sorted_list[idx][0][letter_idx] == unsorted_list[x][0][letter_idx]):
+                    letter_idx += 1
+                if(ord(sorted_list[idx][0][letter_idx]) > ord(unsorted_list[x][0][letter_idx])):    
+                    break
+                else:
+                    idx += 1
+            sorted_list.insert(idx, unsorted_list[x])
+    elif(sort_by == "# Patients (low to high)"):
+        for x in range(len(unsorted_list)):
+            idx = 0
+            while(idx < len(sorted_list)):
+                letter_idx = 0
+                while(letter_idx < len(sorted_list[idx][2]) - 1 and letter_idx < len(unsorted_list[x][2]) - 1 and sorted_list[idx][2][letter_idx] == unsorted_list[x][2][letter_idx]):
+                    letter_idx += 1
+                if(sorted_list[idx][2] == unsorted_list[x][2]):
+                    letter_idx = 0
+                    while(letter_idx < len(sorted_list[idx][0]) - 1 and letter_idx < len(unsorted_list[x][0]) - 1 and sorted_list[idx][0][letter_idx] == unsorted_list[x][0][letter_idx]):
+                        letter_idx += 1
+                    if(ord(sorted_list[idx][0][letter_idx]) > ord(unsorted_list[x][0][letter_idx])):    
+                        break
+                    else:
+                        idx += 1
+                else:
+                    if(ord(sorted_list[idx][2][letter_idx]) > ord(unsorted_list[x][2][letter_idx])):    
+                        break
+                    else:
+                        idx += 1
+            sorted_list.insert(idx, unsorted_list[x])
+    elif(sort_by == "# Patients (high to low)"):
+        for x in range(len(unsorted_list)):
+            idx = 0
+            while(idx < len(sorted_list)):
+                letter_idx = 0
+                while(letter_idx < len(sorted_list[idx][2]) - 1 and letter_idx < len(unsorted_list[x][2]) - 1 and sorted_list[idx][2][letter_idx] == unsorted_list[x][2][letter_idx]):
+                    letter_idx += 1
+                if(sorted_list[idx][2] == unsorted_list[x][2]):
+                    letter_idx = 0
+                    while(letter_idx < len(sorted_list[idx][0]) - 1 and letter_idx < len(unsorted_list[x][0]) - 1 and sorted_list[idx][0][letter_idx] == unsorted_list[x][0][letter_idx]):
+                        letter_idx += 1
+                    if(ord(sorted_list[idx][0][letter_idx]) > ord(unsorted_list[x][0][letter_idx])):    
+                        break
+                    else:
+                        idx += 1
+                else:
+                    if(ord(sorted_list[idx][2][letter_idx]) < ord(unsorted_list[x][2][letter_idx])):    
+                        break
+                    else:
+                        idx += 1
+            sorted_list.insert(idx, unsorted_list[x])
+    elif(sort_by == "Area (default)" or True):
+        for x in range(len(unsorted_list)):
+            idx = 0
+            while(idx < len(sorted_list)):
+                letter_idx = 0
+                while(letter_idx < len(sorted_list[idx][1]) - 1 and letter_idx < len(unsorted_list[x][1]) - 1 and sorted_list[idx][1][letter_idx] == unsorted_list[x][1][letter_idx]):
+                    letter_idx += 1
+                if(sorted_list[idx][1] == unsorted_list[x][1]):
+                    letter_idx = 0
+                    while(letter_idx < len(sorted_list[idx][0]) - 1 and letter_idx < len(unsorted_list[x][0]) - 1 and sorted_list[idx][0][letter_idx] == unsorted_list[x][0][letter_idx]):
+                        letter_idx += 1
+                    if(ord(sorted_list[idx][0][letter_idx]) > ord(unsorted_list[x][0][letter_idx])):    
+                        break
+                    else:
+                        idx += 1
+                else:
+                    if(ord(sorted_list[idx][1][letter_idx]) > ord(unsorted_list[x][1][letter_idx])):    
+                        break
+                    else:
+                        idx += 1
+            sorted_list.insert(idx, unsorted_list[x])
+
+    for x in sorted_list:
+        filtered_list.append(dbc.ListGroupItem(dbc.Row(
+            (dbc.Col(x[0], width={'size':3}),
+            dbc.Col(x[1], width={'size':2}),
+            dbc.Col(x[2], width={'size':2}),
+            dbc.Col(x[3], width={'size':1}) if x[3] != 0 else dbc.Col("", width={'size':1}),
+            dbc.Col(x[4], width={'size':1}) if x[4] != 0 else dbc.Col("", width={'size':1}),
+            dbc.Col(x[5], width={'size':1}) if x[5] != 0 else dbc.Col("", width={'size':1})),
+            className='gx-5',    
+        )))
             
     return filtered_list
 
