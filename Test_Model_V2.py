@@ -1,4 +1,4 @@
-#from turtle import width, xcor
+from logging import PlaceHolder
 from dash import html, dcc, Dash, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
@@ -6,7 +6,7 @@ import dash_auth
 
 # make sample data to read from
 nurse_data = {'Name': ['Jack Knox', 'Hanna Ertel', 'Aidan Anastario', 'Kaushik Karthik', 'Miranda Chai', 'Jay Kee'],
-              'Area': ['Queens', 'Staten Island', 'Bronx', 'Manhattan', 'Queens', 'Brooklyn'],
+              'Area': ['Lafayette', 'Staten Island', 'Bronx', 'Manhattan', 'Queens', 'Brooklyn'],
               'Num_Patients': [5, 4, 7, 5, 3, 6],
               'Hospis': [0, 0, 1, 0, 1, 1],
               'Traich': [1, 1, 0, 0, 0, 0],
@@ -26,6 +26,8 @@ nurse_info_list = []
 
 patient_df = pd.DataFrame(patient_data)
 patient_info_list = []
+
+task_list = ["test basic task\n", "this task is hard\n"]
 
 for x in range(0, len(nurse_df)):
     nurse_info_list.append([])
@@ -96,9 +98,10 @@ jumbotron = html.Div(
 
 sidebar = html.Div([
     dbc.Nav([
-        dbc.NavLink("Nurses", href="/", active="exact"),
+        dbc.NavLink("Home", href="/", active="exact"),
+        dbc.NavLink("Nurses", href="/nurse_dash", active="exact"),
         dbc.NavLink("Patients", href="/patient_dash", active="exact"),
-        dbc.NavLink("Setting", href="/page-2", active="exact"),
+        dbc.NavLink("Setting", href="/settings", active="exact"),
     ],
         vertical=True,
         pills=True,
@@ -116,7 +119,78 @@ patient_header = dbc.Container([
         html.H1("Patient Dashboard", className="text-center text-secondary"),
     ])
 ])
-# redo the filters to be a search by name and one collapse with filters displayed
+
+main_header = dbc.Container([
+    dbc.Row([
+        html.H1("Dashboard", className="text-center text-secondary"),
+    ])
+])
+
+main_dash_page = dbc.Container([
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader("Calendar"),
+                dbc.CardBody(html.H5("this will show a snapshot of the calendar"))
+            ])
+        ], width = {'size':8}),
+        dbc.Col([
+            dbc.Row([
+                dbc.Col([
+                    html.H5("Data Entry")
+                ], width={"offset": 4, 'size':6})
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardHeader("New Patient Entry")
+                    ]),
+                    #html.Br(),
+                    dbc.Card([
+                        dbc.CardHeader("Edit Patient Data")
+                    ])
+                ], width = {'offset':0, 'size':6}),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardHeader("New Nurse Entry")
+                    ]),
+                    #html.Br(),
+                    dbc.Card([
+                        dbc.CardHeader("Edit Nurse Data")
+                    ])
+                ], width ={'offset':0,'size':6}),
+            ])
+        ])
+
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.Row([
+                dbc.Card([
+                    dbc.CardHeader("Nurse List Preview"),
+                    dbc.CardBody(
+                        dbc.ListGroup([
+                            dbc.ListGroupItem(dbc.Row(
+                                (dbc.Col(x[0], width={'size':6}),
+                                dbc.Col(x[1], width={'size':4})),
+                                className='gx-5'
+                            )) for x in nurse_info_list
+                        ])
+                    )
+                ])
+            ])
+        ], width={"size": 4}),
+        dbc.Col([
+            dbc.Row(
+                html.P("talk to data team about data entry")
+            ),
+            dbc.Row(
+                dcc.Checklist(task_list, inline=False)
+            )
+        ])
+    ])
+])
+
 nurse_dash_page = [dbc.Container([
     dbc.Row([
         dbc.Col([
@@ -141,7 +215,7 @@ nurse_dash_page = [dbc.Container([
             align='start'
         ),
         dbc.Col(
-            dbc.Button("Skills", outline=True, id='skills_filter', n_clicks=0),
+            dbc.Button("Expertise", outline=True, id='skills_filter', n_clicks=0),
             width={"size": 3},
             align='start'
         ),
@@ -628,10 +702,12 @@ def patient_toggle_left(n_skills_filter, is_open):
 )
 def render_page(pathname):
     if pathname == "/":
+        return main_dash_page, main_header
+    elif pathname == "/nurse_dash":
         return nurse_dash_page, nurse_header
     elif pathname == "/patient_dash":
         return patient_page_dash, patient_header
-    elif pathname == "/page-2":
+    elif pathname == "/settings":
         return [
             html.H5("Settings")
         ]
