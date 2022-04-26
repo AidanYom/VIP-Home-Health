@@ -116,6 +116,40 @@ add_to_admin()
 
 # In[ ]:
 
+# remove functions
+def removePatient(name) :
+    db.collection('patient').document(name).delete()
+    print("completed")
+    
+def removeNurse(name) :
+    db.collection('nurse').document(name).delete()
+    print('completed')
+    
+def removeAdmin(name) :
+    db.collection('admin').document(name).delete()
+    print('completed')
+   
 
+# add functions
+def getAdmin(name) :
+    result = db.collection('admin').document(name).get()
+    if result.exists:
+        print(result.to_dict())
+    else:
+        print("admin doesn't exist")
+    
+def getPatient(name) :
+    result = db.collection('patient').document(name).get()
+    if result.exists:
+        print(result.to_dict())
+    else:
+        print("patient doesn't exist")
+
+def getNurse(name) :
+    result = db.collection('nurse').document(name).get()
+    if result.exists:
+        print(result.to_dict())
+    else:
+        print("nurse doesn't exist")
 
 
