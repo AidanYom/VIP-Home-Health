@@ -51,7 +51,7 @@ def add_to_patients(Name = False,Address = False,Zone = False,Specializations = 
     u'Availability' : Availability,
     })
 
-def add_to_nurse(Name = False,Address = False,Zone = False,Health_History = False,Seen = False):
+def add_to_nurses(Name = False,Address = False,Zone = False,Health_History = False,Seen = False):
     Name = does_exist(Name,"Nurse Name")
     Address = does_exist(Address,"Address")
     Zone = does_exist(Zone,"Zone Location")
@@ -68,7 +68,7 @@ def add_to_nurse(Name = False,Address = False,Zone = False,Health_History = Fals
     u'Seen' : Seen,
     })
     
-def add_to_admin(Name = False,Nurses = False):
+def add_to_admins(Name = False,Nurses = False):
     Name = does_exist(Name,"Admin Name")
     Nurses = does_exist(Nurses,"Nurses under Jurisdiction (Separate by comma and a space)")
     Nurses = Nurses.split(", ")
@@ -132,7 +132,7 @@ def get_nurse(name) :
         print("nurse doesn't exist")
         
 ## EDIT FUNCTIONS ##
-def edit_patients(Name = False,Address = False,Zone = False,Health_History = False,HH_Needs = False):
+def edit_patient(Name = False,Address = False,Zone = False,Health_History = False,HH_Needs = False):
 #     Name = does_exist(Name,"Patient Name")
 #     Address = does_exist(Address,"Address")
 #     Zone = does_exist(Zone,"Zone Location")
@@ -160,7 +160,7 @@ def edit_patients(Name = False,Address = False,Zone = False,Health_History = Fal
 #     return updates
     doc_ref.update(updates)
     
-def edit_nurses(Name = False,Address = False,Zone = False,Specializations = False,Availability = False):
+def edit_nurse(Name = False,Address = False,Zone = False,Specializations = False,Availability = False):
 #     Name = does_exist(Name,"Nurse Name")
 #     Address = does_exist(Address,"Address")
 #     Zone = does_exist(Zone,"Zone Location")
