@@ -3,12 +3,35 @@ from dash import html, dcc, Dash, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
 import dash_auth
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
+
+'''
+The folowing block of code reads from the firestore database and puts the code into a pandas dataframe. 
+Note: this will only work if you download the fir-practice-17c... code into the folder that this code is in.
+The dataframe is printed at the end for clarity, that is not essential to the function of the code.
+'''
+if not firebase_admin._apps:
+    cred = credentials.Certificate(r'fir-practice-17cce-firebase-adminsdk-ygbmg-0bde5e4b86.json') 
+    default_app = firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+patients = list(db.collection(u'Patients').stream())
+patients_dict = list(map(lambda x: x.to_dict(), patients))
+df = pd.DataFrame(patients_dict)
+print(df)
 # make sample data to read from
+
+'''
+The following block (lines 30 - 52) create dataframes for the patient and the nurse list. 
+This data is not read from the firestore database, that is something that needs to be done.
+'''
 nurse_data = {'Name': ['Jack Knox', 'Hanna Ertel', 'Aidan Anastario', 'Kaushik Karthik', 'Miranda Chai', 'Jay Kee'],
               'Area': ['Lafayette', 'Staten Island', 'Bronx', 'Manhattan', 'Queens', 'Brooklyn'],
               'Num_Patients': [5, 4, 7, 5, 3, 6],
-              'Hospis': [0, 0, 1, 0, 1, 1],
+              'Hospice': [0, 0, 1, 0, 1, 1],
               'Traich': [1, 1, 0, 0, 0, 0],
               'Colostony': [1, 0, 1, 1, 1, 0]
               }
@@ -27,6 +50,13 @@ nurse_info_list = []
 patient_df = pd.DataFrame(patient_data)
 patient_info_list = []
 
+'''
+The following block (56-93) puts a task list, nurse list, and patient list into list form.
+The task list is just a filler for the main dashboard page. Hopefully the tasks can be read
+from input and appeneded to the list, but we did not incorporate that yet.
+The nurse and patient df are read, and inputted into a list of lists, where each list a different
+patient/nurse, and all of their information is in the nested list.
+'''
 task_list = ["test basic task\n", "this task is hard\n"]
 
 for x in range(0, len(nurse_df)):
@@ -34,8 +64,8 @@ for x in range(0, len(nurse_df)):
     nurse_info_list[x].append(nurse_df.at[x, 'Name'])
     nurse_info_list[x].append(nurse_df.at[x, 'Area'])
     nurse_info_list[x].append(str(nurse_df.at[x, 'Num_Patients']))
-    if (nurse_df.at[x, 'Hospis'] == 1):
-        nurse_info_list[x].append("Hospis")
+    if (nurse_df.at[x, 'Hospice'] == 1):
+        nurse_info_list[x].append("Hospice")
     else:
         nurse_info_list[x].append(0)
     if (nurse_df.at[x, 'Traich'] == 1):
@@ -65,15 +95,26 @@ for x in range(0, len(patient_df)):
     else:
         patient_info_list[x].append(0)
 
+'''
+Here is where we set the theme to the basic bootstrap theme. This can be changed here.
+This is also where you can adjust the settings to allow for a mobile compenent.
+'''
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # add a mobile layout component later
 
+'''
+Implements a user authentication feature. 
+This does not read data from the database. Use the given ID and password to get into the webpage. 
+'''
 auth = dash_auth.BasicAuth(
     app,
     {'ID': 'password',
      'ID2': 'password2'}
 )
 
+'''
+This is shown when there is an error loading a page.
+'''
 jumbotron = html.Div(
     dbc.Container(
         [
@@ -96,6 +137,10 @@ jumbotron = html.Div(
     className="p-3 bg-light rounded-3",
 )
 
+'''
+This is the sidebar. There are buttons on the left side of the dashboard
+that let users navigate the site, and this sets that up.
+'''
 sidebar = html.Div([
     dbc.Nav([
         dbc.NavLink("Home", href="/", active="exact"),
@@ -108,24 +153,38 @@ sidebar = html.Div([
     )
 ])
 
+'''
+This is the nurse page header. Just what is says at the top of the page.
+'''
 nurse_header = dbc.Container([
     dbc.Row([
         html.H1("Nurse Dashboard", className="text-center text-secondary"),
     ])
 ])
 
+'''
+This is the patient page header. Just what is says at the top of the page.
+'''
 patient_header = dbc.Container([
     dbc.Row([
         html.H1("Patient Dashboard", className="text-center text-secondary"),
     ])
 ])
 
+'''
+This is the main page header. Just what is says at the top of the page.
+'''
 main_header = dbc.Container([
     dbc.Row([
         html.H1("Dashboard", className="text-center text-secondary"),
     ])
 ])
 
+'''
+This models the layout of the main page. Still needs a lot of work. We need to 
+incorporate a calendar, dynamic task list, make the edit data buttons work, and add
+any other things that will be relevant.
+'''
 main_dash_page = dbc.Container([
     dbc.Row([
         dbc.Col([
@@ -191,6 +250,9 @@ main_dash_page = dbc.Container([
     ])
 ])
 
+'''
+This is the nurse page. Fairly self-explanatory if you understand Dash.
+'''
 nurse_dash_page = [dbc.Container([
     dbc.Row([
         dbc.Col([
@@ -271,7 +333,7 @@ nurse_dash_page = [dbc.Container([
                 dbc.Card(
                     dcc.Checklist(
                         options=[
-                            {"label": "Hospis", "value": "Hospis"},
+                            {"label": "Hospice", "value": "Hospice"},
                             {"label": "Traich", "value": "Traich"},
                             {"label": "Colostony", "value": "Colostony"},
                         ],
@@ -293,6 +355,9 @@ nurse_dash_page = [dbc.Container([
     ])
 ], fluid=True)]
 
+'''
+This is the patient page. Fairly self-explanatory if you understand Dash.
+'''
 patient_page_dash = [dbc.Container([
     dbc.Row([
         dbc.Col([
@@ -398,6 +463,9 @@ content = html.Div(id="page-content")
 
 header = html.Div(id="page-header")
 
+'''
+This is the app.layout, or what is going to be displayed.
+'''
 app.layout = dbc.Container([
     dcc.Location(id="url"),
     header,
