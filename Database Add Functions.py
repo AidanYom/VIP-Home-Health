@@ -200,3 +200,58 @@ def edit_admin(Name = False,Nurses=False):
         updates['Nurses'] = Nurses
 
     doc_ref.update(updates)
+
+    
+### PYREBASE AUTHENTICATION ###
+import pyrebase
+
+# setting up config for pyrebase initialization
+config = {
+  'apiKey': "AIzaSyDKl1yhFUxiRUiH0BkJFKhmBfVnIIEyPhU",
+  'authDomain': "fir-practice-17cce.firebaseapp.com",
+  'databaseURL': "fir-practice-17cce.firebaseio.com",
+  'projectId': "fir-practice-17cce",
+  'storageBucket': "fir-practice-17cce.appspot.com",
+  'messagingSenderId': "527924317355",
+  'appId': "1:527924317355:web:a28159a1f040fd311f7bee",
+  'measurementId': "G-D6W9MBQEK8"
+}
+
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
+
+# checks username and password to see if valid login
+# returns user object if correct, and an error string if not
+# error string come in the format such as "INVALID_PASSWORD", "INVALID_EMAIL", etc.
+# check out https://firebase.google.com/docs/auth/admin/errors for more error messages
+def check_login(emuser, pwd):
+    try:
+        user = auth.sign_in_with_email_and_password(emuser, pwd)
+        return user
+    except Exception as e:
+        error_json = e.args[1]
+        error = json.loads(error_json)['error']['message']
+        if error == 'INVALID_PASSWORD':
+            raise InvalidPasswordException()
+        elif error == 'INVALID_EMAIL':
+            raise InvalidEmailException()
+        else:
+            raise Exception(error)
+
+# creates new user with email and password
+# returns user object if correct, and an error string if not
+# error string come in the format such as "PASSWORD_TOO_WEAK", "EMAIL_ALREADY_EXISTS", etc.
+# check out https://firebase.google.com/docs/auth/admin/errors for more error messages
+def make_user(emuser, pwd):
+    try:
+        user = auth.create_user_with_email_and_password(emuser, pwd)
+        return user
+    except Exception as e:
+        error_json = e.args[1]
+        error = json.loads(error_json)['error']['message']
+        if error == 'INVALID_PASSWORD':
+            raise InvalidPasswordException()
+        elif error == 'INVALID_EMAIL':
+            raise InvalidEmailException()
+        else:
+            raise Exception(error)
