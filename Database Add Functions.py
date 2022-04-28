@@ -220,6 +220,21 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 
+class InvalidPasswordException(Exception):
+    pass
+
+class InvalidEmailException(Exception):
+    pass
+
+class InvalidAdminException(Exception):
+    pass
+
+class InvalidNurseException(Exception):
+    pass
+
+class InvalidPatientException(Exception):
+    pass
+
 # checks username and password to see if valid login
 # returns user object if correct, and an error string if not
 # error string come in the format such as "INVALID_PASSWORD", "INVALID_EMAIL", etc.
